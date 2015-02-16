@@ -1,0 +1,1 @@
+{"views":{"usertable":{"map":"function (doc, meta) {\n  if (meta.id.split('-')[0] == 'usertable') {\n    emit(meta.id, null);\n  }\n}"}}}
