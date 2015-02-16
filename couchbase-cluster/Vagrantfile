@@ -36,19 +36,15 @@ Vagrant.configure(2) do |config|
         ansible.playbook = "couchbase.yml"
       end
 
-#      vmconfig.vm.provision "ansible" do |ansible|
-#        ansible.playbook = "ganglia-setup.yml"
-#      end
-
-#      vmconfig.vm.provision "ansible" do |ansible|
-#        ansible.groups = {
-#	  "ganglia_master" => ["cb1.benchmark"],
-#	  "ganglia_monitor" => ["cb2.benchmark", "cb3.benchmark"],
-#	  "all_groups:children" => ["ganglia_master", "ganglia_monitor"]
-#	}
-#	ansible.limit = 'all'	  
-#	ansible.playbook = "ganglia.yml"
-#      end
+      vmconfig.vm.provision "ansible" do |ansible|
+        ansible.groups = {
+	  "ganglia_master" => ["cb1.benchmark"],
+	  "ganglia_monitor" => ["cb2.benchmark", "cb3.benchmark"],
+	  "all_groups:children" => ["ganglia_master", "ganglia_monitor"]
+	}
+	ansible.limit = 'all'	  
+	ansible.playbook = "ganglia.yml"
+      end
     end
   end
 end

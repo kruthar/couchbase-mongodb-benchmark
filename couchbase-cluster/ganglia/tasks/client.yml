@@ -1,0 +1,14 @@
+---
+- name: Install ganglia monitor
+  yum: name={{item}} state=latest
+  with_items:
+  - ganglia-gmond
+
+- name: Configure gmond
+  template: src=ganglia/templates/gmond.conf.j2 dest=/etc/ganglia/gmond.conf
+  notify:
+    - restart gmond
+    - restart gmetad
+
+- name: Ensure gmond is running.
+  service: name=gmond state=started

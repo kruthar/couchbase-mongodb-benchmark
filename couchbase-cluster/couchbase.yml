@@ -16,12 +16,12 @@
     yum: name=openssl098e state=latest
 
   - name: Check if Couchbase RPM exists
-    stat: path=/vagrant/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm
+    stat: path=/vagrant/rpms/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm
     register: couchbase_rpm
 
   - name: Download Couchbase RPM
-    get_url: url=http://packages.couchbase.com/releases/3.0.2/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm dest=/vagrant/
+    get_url: url=http://packages.couchbase.com/releases/3.0.2/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm dest=/vagrant/rpms/
     when: couchbase_rpm.stat.exists == False
 
   - name: Install current Couchbase RPM
-    yum: name=/vagrant/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm state=present
+    yum: name=/vagrant/rpms/couchbase-server-enterprise-3.0.2-centos6.x86_64.rpm state=present

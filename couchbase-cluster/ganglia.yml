@@ -1,0 +1,22 @@
+---
+- name: Ganglia setup Playbook
+  hosts: all
+  sudo: true
+  tasks:
+  - include: ganglia/tasks/setup.yml
+
+- name: Ganglia frontend/collector Playbook
+  hosts: ganglia_master
+  sudo: true
+  tasks:
+  - include: ganglia/tasks/server.yml
+  handlers:
+  - include: ganglia/handlers/main.yml
+
+- name: Ganglia monitor Playbook
+  hosts: ganglia_monitor
+  sudo: true
+  tasks:
+  - include: ganglia/tasks/client.yml
+  handlers:
+  - include: ganglia/handlers/main.yml
