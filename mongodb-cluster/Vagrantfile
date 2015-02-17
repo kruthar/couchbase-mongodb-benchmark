@@ -1,0 +1,67 @@
+# -*- mode: ruby -*-
+# # vi: set ft=ruby :
+
+machines = [
+  {:name => "config1.benchmark", :ip => "192.168.56.41", :type => "config"},
+  {:name => "config2.benchmark", :ip => "192.168.56.42", :type => "config"},
+  {:name => "config3.benchmark", :ip => "192.168.56.43", :type => "config"},
+  {:name => "rep11.benchmark", :ip => "192.168.56.44", :type => "shard"},
+  {:name => "rep12.benchmark", :ip => "192.168.56.45", :type => "shard"},
+  {:name => "rep13.benchmark", :ip => "192.168.56.46", :type => "shard"},
+  {:name => "rep21.benchmark", :ip => "192.168.56.47", :type => "shard"},
+  {:name => "rep22.benchmark", :ip => "192.168.56.48", :type => "shard"},
+  {:name => "rep23.benchmark", :ip => "192.168.56.49", :type => "shard"}
+]
+
+Vagrant.configure(2) do |config|
+  config.ssh.insert_key = false
+
+  if Vagrant.has_plugin?("vagrant-hostmanager")
+    config.hostmanager.enabled = true
+    config.hostmanager.manage_host = true
+    config.hostmanager.ignore_private_ip = false
+    config.hostmanager.include_offline = true
+  end
+
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.scope = :machine
+  end
+
+  machines.each do |machine|
+    config.vm.define machine[:name] do |vmconfig|
+      vmconfig.vm.box = "chef/centos-6.6"
+      vmconfig.vm.provider "virtualbox" do |v|
+        v.memory = 1024
+        v.cpus = 4
+      end
+
+      vmconfig.vm.hostname = machine[:name]
+      vmconfig.vm.network :private_network, ip: machine[:ip]
+
+     
+      vmconfig.vm.provision "ansible" do |ansible|
+        ansible.groups = {
+	  "mongodb_config" => ["config1.benchmark", "config2.benchmark", "config3.benchmark"],
+	  "mongodb_rs1" => ["rep11.benchmark", "rep12.benchmark", "rep13.benchmark"],
+	  "mongodb_rs2" => ["rep21.benchmark", "rep22.benchmark", "rep23.benchmark"],
+	  "all_groups:children" => ["mongodb_configs", "mongodb_rs1", "mongodb_rs2"]
+	}
+	ansible.playbook = "mongodb/mongodb.yml"
+      end
+      
+#      vmconfig.vm.provision "ansible" do |ansible|
+#        ansible.playbook = "ganglia-setup.yml"
+#      end
+#
+#      vmconfig.vm.provision "ansible" do |ansible|
+#        ansible.groups = {
+#	  "ganglia_master" => ["cb1.benchmark"],
+#	  "ganglia_monitor" => ["cb2.benchmark", "cb3.benchmark"],
+#	  "all_groups:children" => ["ganglia_master", "ganglia_monitor"]
+#	}
+#	ansible.limit = 'all'	  
+#	ansible.playbook = "ganglia.yml"
+#      end
+    end
+  end
+end

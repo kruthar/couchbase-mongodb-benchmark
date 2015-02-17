@@ -1,0 +1,7 @@
+---
+- name: Create data directory
+  file: path=/data/configdb recurse=yes state=directory
+
+- name: Install mongod service
+  shell: mongod --configsvr --dbpath /data/configdb --port 27019 --fork --logpath /var/log/mongodb/mongod.log
+

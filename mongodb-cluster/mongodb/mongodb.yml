@@ -1,0 +1,34 @@
+---
+- name: Install  MongoDB
+  hosts: all
+  sudo: yes
+  tasks:
+  - name: Install selinux-python bindings
+    yum: name=libselinux-python state=latest
+
+  - name: Disable SELinux
+    selinux: state=disabled
+  
+  - name: Install pkgconfig
+    yum: name=pkgconfig state=latest
+
+  - name: Install openssl
+    yum: name=openssl098e state=latest
+
+  - name: Add MongoDB repo file
+    copy: src=templates/template.mongodb.repo dest=/etc/yum.repos.d/mongodb.repo
+
+  - name: Install latest version of MongoDB
+    yum: name=mongodb-org state=latest
+
+- name: MongoDB Config Database Playbook   
+  hosts: mongodb_config
+  sudo: yes
+  tasks:
+  - include: tasks/config.yml
+
+- name: MongoDB Replica Set Playbook
+  hosts: mongodb_rs1:mongodb_rs2
+  sudo: yes
+  tasks:
+  - include: tasks/replica.yml

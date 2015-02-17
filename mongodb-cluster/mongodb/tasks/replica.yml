@@ -1,0 +1,7 @@
+---
+- name: Create MongoDB data directory
+  file: path=/data/db recurse=yes state=directory
+
+- name: Start Replica Service
+  shell: mongod --dbpath /data/db --replSet "{{item}}" --fork --logpath /var/log/mongodb/mongod.log
+  with_items: replica_set
