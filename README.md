@@ -8,22 +8,24 @@ Links
 
 Prerequisites
 -------------
-1. Install Vagrant: http://www.vagrantup.com/downloads.html
+1. Install Virtualbox: https://www.virtualbox.org/wiki/Downloads
 
-2. Install necessary Vagrant plugins:
+2. Install Vagrant: http://www.vagrantup.com/downloads.html
+
+3. Install necessary Vagrant plugins:
     
     ```sh
     vagrant plugin install vagrant-hostmanager
     vagrant plugin install vagrant-cachier
     ```
 
-3. Install Ansible
+4. Install Ansible
 
     ```sh
     brew install ansible
     ```
 
-4. Install YCSB Framework
+5. Install YCSB Framework
     
     ```sh
     git clone https://github.com/kruthar/YCSB.git
@@ -31,4 +33,38 @@ Prerequisites
     mvn clean package
     ```
 
-5. Ensure that YCSB project is in the same directory as the couchbase-mongodb-benchmark project. They are required to be in the same directory for the predefined sample workloads to work correctly.
+6. Ensure that YCSB project is in the same directory as the couchbase-mongodb-benchmark project. They are required to be in the same directory for the predefined sample workloads to work correctly.
+
+Getting Started
+---------------
+Once you have YCSB and the couchbase-mongodb-benchmark projects sitting in the same directory and the YCSB Framework project has been built you can fire up a Couchbase or MongoDB cluster with one command.
+
+For Couchbase:
+
+```sh
+cd couchbase-mongodb-benchmark/couchbase-cluster
+./config_cluster.sh
+```
+
+For MongoDB:
+
+```sh
+cd couchbase-mongodb-benchmark/mongodb-cluster
+./config_cluster.sh
+```
+
+Running the sample workload is also a snap.
+
+For Couchbase
+
+```sh
+cd couchbase-mongodb-benchmark/couchbase-cluster/workloads/workloada
+./run_workloads.sh
+```
+
+For MongoDB:
+
+```sh
+couchbase-mongodb-benchmark/mongodb-cluster/workloads/workloads
+./run_workloads.sh
+```
