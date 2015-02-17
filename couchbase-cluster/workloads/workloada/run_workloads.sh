@@ -10,10 +10,10 @@ password=couchbase
 ram=512
 replicas=2
 
-PATH=$PATH:~/Projects/YCSB/bin
-
 # We are dealing with local files so put the user in the right dir
 cd ${0%/*}
+
+ycsb="../../../../YCSB/bin/ycsb"
 
 vagrant ssh -c "/opt/couchbase/bin/couchbase-cli bucket-delete -c 127.0.0.1:8091 --bucket=$bucket -u $user -p $password" cb1.benchmark
 sleep 2
@@ -26,5 +26,5 @@ if [ ! -d "results" ]; then
 	mkdir results
 fi
 
-ycsb load couchbase -P $workload.properties -P couchbase.properties -s > results/$workload-load-$DATE.txt
-ycsb run couchbase -P $workload.properties -P couchbase.properties -s > results/$workload-run-$DATE.txt
+$ycsb load couchbase -P $workload.properties -P couchbase.properties -s > results/$workload-load-$DATE.txt
+$ycsb run couchbase -P $workload.properties -P couchbase.properties -s > results/$workload-run-$DATE.txt
