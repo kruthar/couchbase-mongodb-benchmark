@@ -3,8 +3,8 @@ Repo for resources in our benchmarking project of Couchbase and MongoDB
 
 Links
 -----
-Original YCSB Framework Location: http://github.com/brianfrankcooper/YCSB
-Avalon YCSB Fork with Couchbase: https://github.com/kruthar/YCSB
+* Original YCSB Framework Location: http://github.com/brianfrankcooper/YCSB
+* Avalon YCSB Fork with Couchbase: https://github.com/kruthar/YCSB
 
 Prerequisites
 -------------
@@ -26,8 +26,8 @@ Prerequisites
 4. Install YCSB Framework
     
     ```sh
-    git clone https://github.com/kruthar/couchbase-mongodb-benchmark.git
-    cd couchbase-mongodb-benchmark
+    git clone https://github.com/kruthar/YCSB.git
+    cd YCSB
     mvn clean package
     ```
 
