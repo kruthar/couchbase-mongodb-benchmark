@@ -1,0 +1,4 @@
+[submodule "YCSB"]
+	path = YCSB
+	url = https://github.com/kruthar/YCSB.git
+	branch = couchbase-mongodb

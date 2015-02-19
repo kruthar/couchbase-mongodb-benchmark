@@ -7,7 +7,7 @@ workload=workloada
 # We are dealing with local files so put the user in the right dir
 cd ${0%/*}
 
-ycsb=../../../../YCSB/bin/ycsb
+ycsb=../../../YCSB/bin/ycsb
 
 vagrant ssh -c 'mongo ycsb --eval "db.dropDatabase()"' config1.benchmark
 vagrant ssh -c 'mongo ycsb --eval "sh.enableSharding(\"ycsb\")"' config1.benchmark

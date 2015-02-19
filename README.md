@@ -25,21 +25,12 @@ Prerequisites
     brew install ansible
     ```
 
-5. Install YCSB Framework
-    
-    ```sh
-    git clone https://github.com/kruthar/YCSB.git
-    cd YCSB
-    mvn clean package
-    ```
-
-6. Ensure that YCSB project is in the same directory as the couchbase-mongodb-benchmark project. They are required to be in the same directory for the predefined sample workloads to work correctly.
-
 Getting Started
 ---------------
-Once you have YCSB and the couchbase-mongodb-benchmark projects sitting in the same directory and the YCSB Framework project has been built you can fire up a Couchbase or MongoDB cluster with one command.
+Once you hve the project pulled down you can bootup a Couchbase or MongoDB cluster with just a couple of commands, then run a sample workload with just a couple more.
+NOTE: We are using the vagrant-cachier plugin to cache packages where we can, but they will still all have to be downloaded the first time you initialize a cluster, so it could take awhile.
 
-For Couchbase:
+Start a cluster for Couchbase:
 
 ```sh
 cd couchbase-mongodb-benchmark/couchbase-cluster
@@ -53,9 +44,16 @@ cd couchbase-mongodb-benchmark/mongodb-cluster
 ./config_cluster.sh
 ```
 
-Running the sample workload is also a snap.
+To run a workload using YCSB you have to initilize the YCSB submodule, then build the YCSB project.
 
-For Couchbase
+```sh
+git submodule init
+git submodule update
+cd YCSB
+mvn clean package
+```
+
+Run a sample workload for Couchbase:
 
 ```sh
 cd couchbase-mongodb-benchmark/couchbase-cluster/workloads/workloada

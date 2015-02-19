@@ -13,7 +13,7 @@ replicas=2
 # We are dealing with local files so put the user in the right dir
 cd ${0%/*}
 
-ycsb="../../../../YCSB/bin/ycsb"
+ycsb="../../../YCSB/bin/ycsb"
 
 vagrant ssh -c "/opt/couchbase/bin/couchbase-cli bucket-delete -c 127.0.0.1:8091 --bucket=$bucket -u $user -p $password" cb1.benchmark
 sleep 2
