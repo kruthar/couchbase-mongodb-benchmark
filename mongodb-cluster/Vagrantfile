@@ -1,17 +1,11 @@
 # -*- mode: ruby -*-
 # # vi: set ft=ruby :
 
-machines = [
-  {:name => "config1.benchmark", :ip => "192.168.56.41", :type => "config"},
-  {:name => "config2.benchmark", :ip => "192.168.56.42", :type => "config"},
-  {:name => "config3.benchmark", :ip => "192.168.56.43", :type => "config"},
-  {:name => "rep11.benchmark", :ip => "192.168.56.44", :type => "shard"},
-  {:name => "rep12.benchmark", :ip => "192.168.56.45", :type => "shard"},
-  {:name => "rep13.benchmark", :ip => "192.168.56.46", :type => "shard"},
-  {:name => "rep21.benchmark", :ip => "192.168.56.47", :type => "shard"},
-  {:name => "rep22.benchmark", :ip => "192.168.56.48", :type => "shard"},
-  {:name => "rep23.benchmark", :ip => "192.168.56.49", :type => "shard"}
-]
+num_cfg_nodes = 3
+num_rep_tiers = 2
+num_rep_nodes_per_tier = 3
+
+machines = gen_machines(num_cfg_nodes, num_rep_tiers, num_rep_nodes_per_tier)
 
 Vagrant.configure(2) do |config|
   config.ssh.insert_key = false
@@ -38,15 +32,9 @@ Vagrant.configure(2) do |config|
       vmconfig.vm.hostname = machine[:name]
       vmconfig.vm.network :private_network, ip: machine[:ip]
 
-     
       vmconfig.vm.provision "ansible" do |ansible|
-        ansible.groups = {
-	  "mongodb_config" => ["config1.benchmark", "config2.benchmark", "config3.benchmark"],
-	  "mongodb_rs1" => ["rep11.benchmark", "rep12.benchmark", "rep13.benchmark"],
-	  "mongodb_rs2" => ["rep21.benchmark", "rep22.benchmark", "rep23.benchmark"],
-	  "all_groups:children" => ["mongodb_configs", "mongodb_rs1", "mongodb_rs2"]
-	}
-	ansible.playbook = "mongodb/mongodb.yml"
+        ansible.groups = group_up(machines)
+        ansible.playbook = "mongodb/mongodb.yml"
       end
       
 #      vmconfig.vm.provision "ansible" do |ansible|
@@ -64,4 +52,57 @@ Vagrant.configure(2) do |config|
 #      end
     end
   end
+end
+
+def gen_machines(num_cfg_nodes, num_rep_tiers, num_rep_nodes_per_tier)
+    config_short_name_fmt = "config%d"
+    rep_short_name_fmt = "rep%d%d"
+    domain_name = "benchmark"
+    ip_start = 40
+    ip_fmt = "192.168.56.%d"
+
+    machines = Array.new
+    ip_counter = 1
+    for n in 1..num_cfg_nodes
+        hostname = (config_short_name_fmt + "." + domain_name) % n
+        ip = ip_fmt % (ip_start + ip_counter)
+        machines.push({:name => hostname, :ip => ip,
+            :type => "config", :groups => ["mongodb_config"]})
+        ip_counter += 1
+    end
+
+    for tier in 1..num_rep_tiers
+      for i in 1..num_rep_nodes_per_tier
+        hostname = (rep_short_name_fmt + "." + domain_name) % [tier, i]
+        ip = ip_fmt % (ip_start + ip_counter)
+        machines.push({:name => hostname, :ip => ip,
+                    :type => "shard", :groups => ["mongodb_rs%d" % tier]})
+        ip_counter += 1
+      end
+    end
+
+    return machines
+end
+
+def group_up (machines)
+  groups = Hash.new
+  machines.each do |machine|
+    name = machine[:name]
+    machine[:groups].each do |group|
+      if !groups.has_key?(group)
+        groups[group] = Array.new
+      end
+      group_list = groups[group]
+      if !group_list.include?(name)
+        group_list.push(name)
+      end
+    end
+  end
+  all_groups = Array.new
+  groups.each do |k, v|
+     all_groups.push(k)
+  end
+  groups["all_groups:children"] = all_groups
+
+  return groups
 end
