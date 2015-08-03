@@ -1,17 +1,9 @@
 # -*- mode: ruby -*-
 # # vi: set ft=ruby :
 
-machines = [
-  {:name => "cb1.benchmark", :ip => "192.168.56.41"},
-  {:name => "cb2.benchmark", :ip => "192.168.56.42"},
-  {:name => "cb3.benchmark", :ip => "192.168.56.43"},
-  {:name => "cb4.benchmark", :ip => "192.168.56.44"},
-  {:name => "cb5.benchmark", :ip => "192.168.56.45"},
-  {:name => "cb6.benchmark", :ip => "192.168.56.46"},
-  {:name => "cb7.benchmark", :ip => "192.168.56.47"},
-  {:name => "cb8.benchmark", :ip => "192.168.56.48"},
-  {:name => "cb9.benchmark", :ip => "192.168.56.49"}
-]
+num_nodes = 9
+
+machines = gen_machines(num_nodes)
 
 Vagrant.configure(2) do |config|
   config.ssh.insert_key = false
@@ -53,4 +45,19 @@ Vagrant.configure(2) do |config|
 #      end
     end
   end
+end
+
+def gen_machines(num_nodes)
+    short_name_fmt = "cb%d"
+    domain_name = "benchmark"
+    ip_start = 40
+    ip_fmt = "192.168.56.%d"
+
+    machines = Array.new
+    for n in 1..num_nodes
+        hostname = (short_name_fmt + "." + domain_name) % n
+        ip = ip_fmt % (ip_start + n)
+        machines.push({:name => hostname, :ip => ip})
+    end
+    return machines
 end
